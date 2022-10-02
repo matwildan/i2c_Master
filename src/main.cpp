@@ -13,14 +13,12 @@
 // Connect a 10K resistor from pin 2 (data) to pin 1 (power) of the sensor
 DHT dht(DHTPIN, DHTTYPE);
 
+const int masterAddr = 8; // master01 = 8, master02 = 9, master03 = 10
+
 float t, h;
 char msg[40];
 char temp[6];
 char hum[6];
-String temp_string;
-byte x = 0;
-byte y = 0;
-byte *t_byte = (byte*) &t;
 
 int ftoa(char *a, float f)  //translates floating point readings into strings
 {
@@ -51,32 +49,17 @@ void setup()
 {
   Serial.begin(9600);
   dht.begin();
-  Wire.begin(10); // join i2c bus (address optional for master)
+  Wire.begin(masterAddr); // join i2c bus (address optional for master)
 }
 
 void loop()
 {
-  Serial.println("[INFO] Master02 send");
-  // t = dht.readTemperature();
-  
-  // h = dht.readHumidity();
+  Serial.println("[INFO] Master01 send");
+
   ftoa(temp,dht.readTemperature());
   ftoa(hum,dht.readHumidity());
-  // ftoa(temp_rand,random(10,20));
-  // ftoa(hum_rand,random(70,90));
-  
-  //   //Compile a comma delimited string to send to the log
-  //   sprintf(msg,"%s,%s",temp, hum);
-  // Serial.println(t); 
-  // dtostrf(t,4,2,temp);
-  // dtostrf(h,4,2,hum);
-  // sprintf(temp,"%.2f",t);
-  // Serial.println(msg);
-  // temp_string = String(t);
-  // Serial.println(temp);
-  // Serial.println(humid);
-  // for (int i =0; i <= 5; i++){
-  sprintf(msg,"Master02->Temp:%sC,Hum:%s%%%",temp, hum);
+
+  sprintf(msg,"Master01->Temp:%sC,Hum:%s%%%",temp, hum);
   Serial.println(msg);
 
   Wire.beginTransmission(1); // transmit to device #4
@@ -91,5 +74,5 @@ void loop()
   Wire.write(msg);        // sends five bytes 
   Wire.endTransmission();    // stop transmitting
   
-  delay(4000);
+  delay(2000);
 }
